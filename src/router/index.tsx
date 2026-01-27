@@ -1,22 +1,31 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { AuthGuard } from "./authGuard";
 import { AuthLayout } from "../view/layouts/authLayout";
+import { lazy, Suspense } from "react";
+import { Spinner } from "@/view/components/ui/spinner";
 
+const Login = lazy(() => import('../view/pages/Login'));
 export function Router() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route element={<AuthGuard isPrivate={false} />}>
-          <Route element={<AuthLayout />}>
-            <Route path="/login" element={<h1>Login</h1>} />
+      <Suspense fallback={
+        <div className="h-screen w-screen flex items-center justify-center">
+          <Spinner className="size-10 text-primary" />
+        </div>
+      }>
+        <Routes>
+          <Route element={<AuthGuard isPrivate={false} />}>
+            <Route element={<AuthLayout />}>
+              <Route path="/login" element={<Login />} />
+            </Route>
           </Route>
-        </Route>
 
-        <Route element={<AuthGuard isPrivate={true} />}>
-          <Route path="/" element={<h1>dash</h1>} />
-        </Route>
+          <Route element={<AuthGuard isPrivate={true} />}>
+            <Route path="/" element={<h1>dash</h1>} />
+          </Route>
 
-      </Routes>
+        </Routes>
+      </Suspense>
     </BrowserRouter>
   )
 }
