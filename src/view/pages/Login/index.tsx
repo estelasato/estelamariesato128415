@@ -1,31 +1,35 @@
 import { Button } from "@/view/components/ui/button";
 import { Input } from "@/view/components/ui/input";
-import { Label } from "@/view/components/ui/label";
 import { FormProvider } from "react-hook-form";
 import { useLogin } from "./useLogin";
 
 export default function Login() {
   const { form, handleSubmit, isLoading } = useLogin();
+  const error = form.formState.errors;
 
   return (
     <div className="border border-border rounded-lg p-6 sm:p-8 md:p-10 w-lg sm:w-sm md:w-md lg:w-lg mx-6 mt-10 sm:mt-16 md:mt-20">
       <h1 className="text-2xl font-bold mb-6">Bem vindo!</h1>
       <FormProvider {...form}>
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="email">E-mail</Label>
-            <Input {...form.register('username')}
-              error={form.formState.errors.username?.message}
-              id="email" type="email" placeholder="Digite seu e-mail" />
-          </div>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <Input {...form.register('username')}
+            label="Username"
+            error={error.username?.message}
+            id="email" placeholder="Digite seu username"
+          />
 
-          <div className="space-y-2">
-            <Label htmlFor="password">Senha</Label>
-            <Input {...form.register('password')} id="password" type="password" placeholder="Digite sua senha" />
-          </div>
+          <Input
+            error={error.password?.message}
+            label="Senha"
+            isPassword
+            {...form.register('password')}
+            id="password"
+            type="password"
+            placeholder="Digite sua senha"
+          />
 
-          <Button isLoading={isLoading} className="w-full" onClick={handleSubmit}>Entrar</Button>
-        </div>
+          <Button type="submit" isLoading={isLoading} className="w-full">Entrar</Button>
+        </form>
       </FormProvider>
     </div>
   )
