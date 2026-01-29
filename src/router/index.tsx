@@ -4,9 +4,10 @@ import { AuthLayout } from "../view/layouts/authLayout";
 import { lazy, Suspense } from "react";
 import { Spinner } from "@/view/components/ui/spinner";
 import { PrivateLayout } from "@/view/layouts/privateLayout";
-import PetList from "@/view/pages/Pets/List";
 
 const Login = lazy(() => import('../view/pages/Login'));
+const PetList = lazy(() => import('../view/pages/Pets/List'));
+
 export function Router() {
   return (
     <BrowserRouter>

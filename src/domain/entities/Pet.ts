@@ -4,7 +4,7 @@ import type { Owner } from "./Owner";
 import type { ListResponse } from "@/shared/types/list";
 
 export interface CreatePetParams {
-  name: string;
+  nome: string;
   raca: string;
   idade: number;
 }

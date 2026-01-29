@@ -1,4 +1,4 @@
-import { petService } from "@/app/services/petService";
+import { petFacade } from "@/app/facades/petFacade";
 import type { listPetsParams } from "@/domain/entities/Pet";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
@@ -12,7 +12,7 @@ export function useListPets() {
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['pets', params.nome, params.page, params.size],
-    queryFn: () => petService.listPets(params),
+    queryFn: () => petFacade.listPets(params),
   });
 
   function handleSearch(value?: string) {

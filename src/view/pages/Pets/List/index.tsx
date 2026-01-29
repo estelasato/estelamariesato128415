@@ -3,6 +3,7 @@ import { useListPets } from "./usePetList";
 import { PetCard } from "../components/petCard";
 import { Pagination } from "@/view/components/ui/pagination";
 import { Spinner } from "@/view/components/ui/spinner";
+import { useNavigate } from "react-router-dom";
 
 export default function PetList() {
   const {
@@ -14,12 +15,14 @@ export default function PetList() {
     handlePageChange
   } = useListPets();
 
+  const navigate = useNavigate();
+
   return (
     <div className="flex flex-col gap-6">
       <ListHeader
         title="Pets"
         textButton="Novo Pet"
-        onRegister={() => {}}
+        onRegister={() => navigate('/pets/create')}
         onSearch={handleSearch}
       />
 
@@ -35,7 +38,7 @@ export default function PetList() {
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
             {pets.map((pet) => (
-              <PetCard key={pet.id} pet={pet} onClick={() => {}} />
+              <PetCard key={pet.id} pet={pet} onClick={() => navigate(`/pets/${pet.id}`)} />
             ))}
           </div>
 
