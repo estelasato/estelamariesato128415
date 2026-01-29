@@ -8,6 +8,7 @@ import { PrivateLayout } from "@/view/layouts/privateLayout";
 const Login = lazy(() => import('../view/pages/Login'));
 const PetList = lazy(() => import('../view/pages/Pets/List'));
 const PetForm = lazy(() => import('../view/pages/Pets/Form'));
+const OwnerList = lazy(() => import('../view/pages/Owners/List'));
 
 export function Router() {
   return (
@@ -30,6 +31,8 @@ export function Router() {
               <Route path="/pets" element={<PetList />} />
               <Route path="/pets/create" element={<PetForm />} />
               <Route path="/pets/:id" element={<PetForm />} />
+              <Route path="/owners" element={<OwnerList />} />
+
             </Route>
           </Route>
 
