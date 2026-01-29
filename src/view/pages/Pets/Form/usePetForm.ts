@@ -6,15 +6,12 @@ import { useForm } from "react-hook-form";
 import { formPetSchema, type FormPetSchema } from "@/domain/validators/petValidator";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useEffect, useMemo, useState } from "react";
-import { ownerFacade } from "@/app/facades/ownerFacade";
+import { useEffect} from "react";
 
 export function usePetForm() {
   const { id } = useParams();
   const isEdit = !!id;
   const navigate = useNavigate();
-
-  const [tutors, setTutors] = useState<{ label: string, value: string }[]>([]);
 
   const { data: pet, isLoading: isLoadingPet } = useQuery({
     queryKey: ['pet', id],
@@ -22,16 +19,6 @@ export function usePetForm() {
     enabled: !!id,
   })
 
-  const { data: owners = [], isLoading: isLoadingOwners } = useQuery({
-    queryKey: ['owners'],
-    queryFn: () => ownerFacade.listOwners({ page: 1, size: 50 }),
-    enabled: !!id,
-    select: (data) => data.content.map((owner) => ({ label: owner.nome, value: owner.id.toString() })),
-  })
-
-  const tutorsList = useMemo(() => {
-    return [...owners, ...(tutors || [])]
-  }, [owners || [], tutors || []])
 
   const form = useForm<FormPetSchema>({
     resolver: zodResolver(formPetSchema),
@@ -75,8 +62,6 @@ export function usePetForm() {
         raca: pet.raca,
         idade: pet.idade ?? undefined,
       });
-      const tutors = pet.tutores.map((tutor) => ({ label: tutor.nome, value: tutor.id.toString() }));
-      setTutors(tutors);
     }
   }, [pet]);
 
@@ -85,7 +70,6 @@ export function usePetForm() {
     isPending: isCreating || isUpdating || isLoadingPet,
     form,
     pet,
-    tutors,
-    tutorsList
+    owners: pet?.tutores || [],
   }
 }

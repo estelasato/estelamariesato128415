@@ -4,14 +4,13 @@ import { FormProvider } from "react-hook-form";
 import { Input } from "@/view/components/ui/input";
 import { Button } from "@/view/components/ui/button";
 import { ArrowLeftIcon } from "lucide-react";
-import { MultiSelect } from "@/view/components/ui/multiSelect";
 
 export default function PetForm() {
   const navigate = useNavigate();
   const { id } = useParams();
   const isEdit = !!id;
 
-  const { form, handleSubmit, isPending, tutors, tutorsList } = usePetForm();
+  const { form, handleSubmit, isPending, owners } = usePetForm();
 
   return (
     <div className="flex flex-col gap-6 md:max-w-xl mx-auto">
@@ -30,13 +29,9 @@ export default function PetForm() {
             <Input {...form.register('raca')} label="Raça*" error={form.formState.errors.raca?.message} />
             <Input {...form.register('idade')} label="Idade*" error={form.formState.errors.idade?.message} />
 
-            {isEdit && (
-              <MultiSelect options={tutorsList || []} placeholder="Selecione os tutores"
-                onValueChange={() => { }}
-                defaultValue={tutors.map((tutor) => tutor.value)}
-                deduplicateOptions={true}
-              />
-            )}
+            {owners?.map((owner) => (
+              <div key={owner.id}>{owner.nome} - {owner.telefone}</div>
+            ))}
             <Button type="submit" isLoading={isPending}>{isEdit ? 'Salvar' : 'Cadastrar'}</Button>
           </form>
         </div>
