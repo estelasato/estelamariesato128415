@@ -8,13 +8,11 @@ import { useNavigate } from "react-router-dom";
 export default function PetList() {
   const {
     pets,
-    page,
-    pageCount,
+    params,
     isLoading,
     handleSearch,
     handlePageChange
   } = useListPets();
-
   const navigate = useNavigate();
 
   return (
@@ -42,11 +40,11 @@ export default function PetList() {
             ))}
           </div>
 
-          {pageCount > 1 && (
+          {params?.pageCount && params?.pageCount > 1 && (
             <Pagination
-              page={page}
-              pageCount={pageCount}
-              onPageChange={handlePageChange}
+              page={params.page}
+              pageCount={params?.pageCount ?? 0}
+              onPageChange={(page) => handlePageChange(page)}
             />
           )}
         </>

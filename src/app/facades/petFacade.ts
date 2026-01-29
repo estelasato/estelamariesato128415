@@ -4,6 +4,11 @@ import type { CreatePetParams, listPetsParams, UpdatePetParams } from '@/domain/
 import type { DeleteImageParams } from '@/shared/types/imageType';
 
 export const petFacade = {
+  async getPet(id: number) {
+    const pet = await petService.getPetById(id);
+    return pet;
+  },
+
   async createPet(params: CreatePetParams) {
     const pet = await petService.createPet(params);
     queryClient.invalidateQueries({ queryKey: ['pets'] });

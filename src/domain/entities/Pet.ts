@@ -6,7 +6,7 @@ import type { ListResponse } from "@/shared/types/list";
 export interface CreatePetParams {
   nome: string;
   raca: string;
-  idade: number;
+  idade: string | number | undefined;
 }
 
 export type UpdatePetParams = CreatePetParams;
@@ -15,7 +15,7 @@ export interface Pet {
   id: number,
   nome: string,
   raca: string,
-  idade: number,
+  idade: string | number | undefined,
   foto: ImageType
 }
 
