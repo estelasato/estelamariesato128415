@@ -1,6 +1,8 @@
 import { petFacade } from "@/app/facades/petFacade";
+import { useMutation } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import type { Pet } from "@/domain/entities/Pet";
 
 export function useListPets() {
   const [params, setParams] = useState<any>({
@@ -11,6 +13,14 @@ export function useListPets() {
   });
 
   const [search, setSearch] = useState<string>('');
+  const [petToDelete, setPetToDelete] = useState<Pet | null>(null);
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => petFacade.deletePet(id),
+    onSuccess: () => {
+      setPetToDelete(null);
+    },
+  });
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['pets', params.page, search],
@@ -27,6 +37,16 @@ export function useListPets() {
 
   function handlePageChange(page: number) {
     setParams((prev: any) => ({ ...prev, page }));
+  }
+
+  function openDeleteModal(pet: Pet) {
+    setPetToDelete(pet);
+  }
+
+  function handleConfirmDelete() {
+    if (petToDelete) {
+      deleteMutation.mutate(petToDelete.id);
+    }
   }
 
   useEffect(() => {
@@ -48,5 +68,10 @@ export function useListPets() {
     error,
     handleSearch,
     handlePageChange,
+    petToDelete,
+    setPetToDelete,
+    openDeleteModal,
+    handleConfirmDelete,
+    isDeleting: deleteMutation.isPending,
   };
 }

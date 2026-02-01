@@ -48,8 +48,8 @@ export function usePetForm() {
       } else {
         createPet(petData);
       }
-      navigate('/pets');
-      toast.success('Pet salvo com sucesso');
+      navigate(isEdit ? `/pets/${id}` : "/pets");
+      toast.success("Pet salvo com sucesso");
     } catch (error) {
       toast.error('Erro ao salvar pet');
     }

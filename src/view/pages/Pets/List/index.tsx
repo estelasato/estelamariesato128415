@@ -3,7 +3,9 @@ import { useListPets } from "./usePetList";
 import { PetCard } from "../components/petCard";
 import { Pagination } from "@/view/components/ui/pagination";
 import { Spinner } from "@/view/components/ui/spinner";
+
 import { useNavigate } from "react-router-dom";
+import { DeleteModal } from "@/view/components/deleteModal";
 
 export default function PetList() {
   const {
@@ -11,7 +13,12 @@ export default function PetList() {
     params,
     isLoading,
     handleSearch,
-    handlePageChange
+    handlePageChange,
+    petToDelete,
+    setPetToDelete,
+    openDeleteModal,
+    handleConfirmDelete,
+    isDeleting,
   } = useListPets();
   const navigate = useNavigate();
 
@@ -36,7 +43,13 @@ export default function PetList() {
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
             {pets.map((pet) => (
-              <PetCard key={pet.id} pet={pet} onClick={() => navigate(`/pets/${pet.id}`)} />
+              <PetCard
+                key={pet.id}
+                pet={pet}
+                onClick={() => navigate(`/pets/${pet.id}`)}
+                onEdit={() => navigate(`/pets/${pet.id}/edit`)}
+                onDelete={() => openDeleteModal(pet)}
+              />
             ))}
           </div>
 
@@ -49,6 +62,16 @@ export default function PetList() {
           )}
         </>
       )}
+
+      <DeleteModal
+        open={!!petToDelete}
+        onOpenChange={(open) => !open && setPetToDelete(null)}
+        title="Excluir pet"
+        description={`Excluir o pet "${petToDelete?.nome ?? ""}"? Essa ação não pode ser desfeita.`}
+        onConfirm={handleConfirmDelete}
+        isLoading={isDeleting}
+        onCancel={() => setPetToDelete(null)}
+      />
     </div>
   );
 }
