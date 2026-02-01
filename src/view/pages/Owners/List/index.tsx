@@ -4,6 +4,7 @@ import { Pagination } from "@/view/components/ui/pagination";
 import { Spinner } from "@/view/components/ui/spinner";
 import { useNavigate } from "react-router-dom";
 import { OwnerCard } from "../components/ownerCard";
+import { DeleteModal } from "@/view/components/deleteModal";
 
 export default function OwnerList() {
   const {
@@ -11,7 +12,12 @@ export default function OwnerList() {
     params,
     isLoading,
     handleSearch,
-    handlePageChange
+    handlePageChange,
+    ownerToDelete,
+    setOwnerToDelete,
+    openDeleteModal,
+    handleConfirmDelete,
+    isDeleting,
   } = useListOwners();
   const navigate = useNavigate();
 
@@ -20,7 +26,7 @@ export default function OwnerList() {
       <ListHeader
         title="Tutores"
         textButton="Novo Tutor"
-        onRegister={() => navigate('/owners/create')}
+        onRegister={() => navigate("/owners/create")}
         onSearch={handleSearch}
       />
 
@@ -30,13 +36,19 @@ export default function OwnerList() {
         </div>
       ) : owners.length === 0 ? (
         <div className="flex items-center justify-center py-12 text-muted-foreground">
-          Nenhum pet encontrado
+          Nenhum tutor encontrado
         </div>
       ) : (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
             {owners.map((owner) => (
-              <OwnerCard key={owner.id} owner={owner} onClick={() => navigate(`/owners/${owner.id}`)} />
+              <OwnerCard
+                key={owner.id}
+                owner={owner}
+                onClick={() => navigate(`/owners/${owner.id}`)}
+                onEdit={() => navigate(`/owners/${owner.id}`)}
+                onDelete={() => openDeleteModal(owner)}
+              />
             ))}
           </div>
 
@@ -49,6 +61,15 @@ export default function OwnerList() {
           )}
         </>
       )}
+      <DeleteModal
+        open={!!ownerToDelete}
+        onOpenChange={(open) => !open && setOwnerToDelete(null)}
+        title="Excluir tutor"
+        description={`Excluir o tutor "${ownerToDelete?.nome ?? ""}"? Essa ação não pode ser desfeita.`}
+        onConfirm={handleConfirmDelete}
+        isLoading={isDeleting}
+        onCancel={() => setOwnerToDelete(null)}
+      />
     </div>
   );
 }

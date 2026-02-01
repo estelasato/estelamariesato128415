@@ -43,4 +43,20 @@ export const ownerFacade = {
     await ownerService.deleteOwnerPhoto(params);
     queryClient.invalidateQueries({ queryKey: ['owner', params.id] });
   },
+
+  async addPet(ownerId: number, petId: number) {
+    await ownerService.addPet(ownerId, petId);
+    queryClient.invalidateQueries({ queryKey: ['owner', ownerId] });
+    queryClient.invalidateQueries({ queryKey: ['owners'] });
+    queryClient.invalidateQueries({ queryKey: ['pet', petId] });
+    queryClient.invalidateQueries({ queryKey: ['pets'] });
+  },
+
+  async removePet(ownerId: number, petId: number) {
+    await ownerService.removePet(ownerId, petId);
+    queryClient.invalidateQueries({ queryKey: ['owner', ownerId] });
+    queryClient.invalidateQueries({ queryKey: ['owners'] });
+    queryClient.invalidateQueries({ queryKey: ['pet', petId] });
+    queryClient.invalidateQueries({ queryKey: ['pets'] });
+  },
 };

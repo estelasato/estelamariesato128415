@@ -10,6 +10,7 @@ const PetList = lazy(() => import('../view/pages/Pets/List'));
 const PetDetail = lazy(() => import('../view/pages/Pets/Detail'));
 const PetForm = lazy(() => import('../view/pages/Pets/Form'));
 const OwnerList = lazy(() => import('../view/pages/Owners/List'));
+const OwnerForm = lazy(() => import('../view/pages/Owners/Form'));
 
 export function Router() {
   return (
@@ -34,6 +35,8 @@ export function Router() {
               <Route path="/pets/:id" element={<PetDetail />} />
               <Route path="/pets/:id/edit" element={<PetForm />} />
               <Route path="/owners" element={<OwnerList />} />
+              <Route path="/owners/create" element={<OwnerForm />} />
+              <Route path="/owners/:id" element={<OwnerForm />} />
             </Route>
           </Route>
 

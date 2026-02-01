@@ -1,5 +1,6 @@
 import { ownerFacade } from "@/app/facades/ownerFacade";
-import { useQuery } from "@tanstack/react-query";
+import type { Owner } from "@/domain/entities/Owner";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
 export function useListOwners() {
@@ -10,7 +11,15 @@ export function useListOwners() {
     total: 0,
   });
 
-  const [search, setSearch] = useState<string>('');
+  const [search, setSearch] = useState<string>("");
+  const [ownerToDelete, setOwnerToDelete] = useState<Owner | null>(null);
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => ownerFacade.deleteOwner(id),
+    onSuccess: () => {
+      setOwnerToDelete(null);
+    },
+  });
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['owners', params.page, search],
@@ -27,6 +36,16 @@ export function useListOwners() {
 
   function handlePageChange(page: number) {
     setParams((prev: any) => ({ ...prev, page }));
+  }
+
+  function openDeleteModal(owner: Owner) {
+    setOwnerToDelete(owner);
+  }
+
+  function handleConfirmDelete() {
+    if (ownerToDelete) {
+      deleteMutation.mutate(ownerToDelete.id);
+    }
   }
 
   useEffect(() => {
@@ -48,5 +67,10 @@ export function useListOwners() {
     error,
     handleSearch,
     handlePageChange,
+    ownerToDelete,
+    setOwnerToDelete,
+    openDeleteModal,
+    handleConfirmDelete,
+    isDeleting: deleteMutation.isPending,
   };
 }

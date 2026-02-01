@@ -37,6 +37,14 @@ async function deleteOwnerPhoto(params: DeleteImageParams) {
   await httpClient.delete(`/v1/tutores/${params.id}/fotos/${params.fotoId}`);
 }
 
+async function addPet(ownerId: number, petId: number) {
+  await httpClient.post(`/v1/tutores/${ownerId}/pets/${petId}`);
+}
+
+async function removePet(ownerId: number, petId: number) {
+  await httpClient.delete(`/v1/tutores/${ownerId}/pets/${petId}`);
+}
+
 export const ownerService = {
   createOwner,
   updateOwner,
@@ -45,4 +53,6 @@ export const ownerService = {
   getOwnerById,
   uploadOwnerPhoto,
   deleteOwnerPhoto,
+  addPet,
+  removePet
 }
