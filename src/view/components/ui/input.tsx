@@ -53,7 +53,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           <input
             type={isPassword ? (showPassword ? "text" : "password") : type}
             className={cn(
-              "flex h-10 w-full rounded-md border border-input opacity-70 bg-transparent px-3 py-1 text-base transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm mt-1",
+              "flex h-10 w-full rounded-md border border-input opacity-70 bg-transparent px-3 py-1 text-base transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
               className
             )}
             ref={ref}
@@ -61,7 +61,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             onChange={handleChange}
           />
           {isPassword && (
-            <div className="absolute right-3 top-[59%] " onClick={handleShowPassword}>
+            <div className="absolute right-3 top-[56%] " onClick={handleShowPassword}>
               {showPassword ? <EyeOffIcon className="size-4" /> : <EyeIcon className="size-4" />}
             </div>
           )}
