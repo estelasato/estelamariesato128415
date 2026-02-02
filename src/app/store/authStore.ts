@@ -12,12 +12,10 @@ interface AuthState {
 
 interface AuthActions {
   setAuth: (data: AuthTokens) => void;
-  setAccessToken: (token: string, expires_in: number) => void;
   logout: () => void;
   isAuthenticated: () => boolean;
   isTokenExpired: () => boolean;
   isRefreshTokenExpired: () => boolean;
-  getTokenExpiresAt: () => number | null;
 }
 
 type AuthStore = AuthState & AuthActions;
@@ -38,17 +36,9 @@ export const useAuthStore = create<AuthStore>()(
       setAuth: ({ access_token, refresh_token, expires_in, refresh_expires_in }) => {
         set({
           access_token,
-          refresh_token,
+          refresh_token: refresh_token ?? null,
           expires_in,
           refresh_expires_in,
-          authenticated_at: Date.now(),
-        });
-      },
-
-      setAccessToken: (access_token, expires_in) => {
-        set({
-          access_token,
-          expires_in,
           authenticated_at: Date.now(),
         });
       },
@@ -78,12 +68,6 @@ export const useAuthStore = create<AuthStore>()(
         const expiresAt = authenticated_at + refresh_expires_in * 1000;
         return Date.now() >= expiresAt;
       },
-
-      getTokenExpiresAt: () => {
-        const { authenticated_at, expires_in } = get();
-        if (!authenticated_at || !expires_in) return null;
-        return authenticated_at + expires_in * 1000;
-      },
     }),
     {
       name: "auth-storage",
@@ -97,7 +81,3 @@ export const useAuthStore = create<AuthStore>()(
     }
   )
 );
-
-export const selectAccessToken = (state: AuthStore) => state.access_token;
-export const selectRefreshToken = (state: AuthStore) => state.refresh_token;
-export const selectIsAuthenticated = (state: AuthStore) => state.isAuthenticated();

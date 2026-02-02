@@ -2,8 +2,10 @@ import axios, { type AxiosError, type InternalAxiosRequestConfig } from "axios";
 import { useAuthStore } from "../store/authStore";
 import type { AuthTokens } from "../../domain/entities/Auth";
 
+const apiBaseURL = import.meta.env.VITE_API_URL;
+
 export const httpClient = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: apiBaseURL,
 });
 
 let isRefreshing = false;
@@ -14,14 +16,9 @@ let failedRequestsQueue: Array<{
 
 httpClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    const { access_token, isTokenExpired, isRefreshTokenExpired } =
-      useAuthStore.getState();
+    const { access_token } = useAuthStore.getState();
 
-    if (isTokenExpired() && isRefreshTokenExpired()) {
-      useAuthStore.getState().logout();
-    }
-
-    if (access_token && config.headers) {
+    if (access_token) {
       config.headers.Authorization = `Bearer ${access_token}`;
     }
 
@@ -29,6 +26,13 @@ httpClient.interceptors.request.use(
   },
   (error) => Promise.reject(error)
 );
+
+function rejectAndClearQueue(error: AxiosError) {
+  const auth = useAuthStore.getState();
+  auth.logout();
+  failedRequestsQueue.forEach((req) => req.onFailure(error));
+  failedRequestsQueue = [];
+}
 
 httpClient.interceptors.response.use(
   (response) => response,
@@ -41,9 +45,10 @@ httpClient.interceptors.response.use(
       return Promise.reject(error);
     }
 
+    const auth = useAuthStore.getState();
+
     if (originalRequest.url?.includes("/autenticacao/refresh")) {
-      useAuthStore.getState().logout();
-      failedRequestsQueue = [];
+      rejectAndClearQueue(error);
       return Promise.reject(error);
     }
 
@@ -54,49 +59,35 @@ httpClient.interceptors.response.use(
             originalRequest.headers.Authorization = `Bearer ${token}`;
             resolve(httpClient(originalRequest));
           },
-          onFailure: (err: AxiosError) => {
-            reject(err);
-          },
+          onFailure: reject,
         });
       });
+    }
+
+    if (auth.isRefreshTokenExpired() || !auth.refresh_token) {
+      rejectAndClearQueue(error);
+      return Promise.reject(error);
     }
 
     originalRequest._retry = true;
     isRefreshing = true;
 
-    const { refresh_token, isRefreshTokenExpired } = useAuthStore.getState();
-
-    if (!refresh_token || isRefreshTokenExpired()) {
-      useAuthStore.getState().logout();
-      return Promise.reject(error);
-    }
-
     try {
-      const { data } = await axios.post<AuthTokens>(
-        `${import.meta.env.VITE_API_URL}/autenticacao/refresh`,
+      const { data } = await axios.put<AuthTokens>(
+        `${apiBaseURL}/autenticacao/refresh`,
         null,
-        {
-          headers: {
-            Authorization: `Bearer ${refresh_token}`,
-          },
-        }
+        { headers: { Authorization: `Bearer ${auth.refresh_token}` } }
       );
 
-      useAuthStore.getState().setAuth(data);
+      auth.setAuth(data);
 
-      failedRequestsQueue.forEach((request) => {
-        request.onSuccess(data.access_token);
-      });
+      failedRequestsQueue.forEach((request) => request.onSuccess(data.access_token));
       failedRequestsQueue = [];
 
       originalRequest.headers.Authorization = `Bearer ${data.access_token}`;
       return httpClient(originalRequest);
     } catch (refreshError) {
-      useAuthStore.getState().logout();
-      failedRequestsQueue.forEach((request) => {
-        request.onFailure(refreshError as AxiosError);
-      });
-      failedRequestsQueue = [];
+      rejectAndClearQueue(refreshError as AxiosError);
       return Promise.reject(refreshError);
     } finally {
       isRefreshing = false;
