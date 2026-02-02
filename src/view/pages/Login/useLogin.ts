@@ -16,15 +16,16 @@ export function useLogin() {
     },
   });
 
-  const { mutate, isPending, error } = useMutation({
+
+  const { mutateAsync, isPending, error } = useMutation({
     mutationFn: authFacade.signIn,
     onSuccess: () => {
-      navigate('/', { replace: true });
+      navigate('/pets', { replace: true });
     },
   });
 
   function handleSubmit(data: LoginSchemaFormData) {
-    mutate(data);
+    mutateAsync(data);
   }
 
   return {
