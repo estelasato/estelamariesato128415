@@ -36,12 +36,12 @@ export default function PetList() {
           <Spinner className="size-10" />
         </div>
       ) : pets.length === 0 ? (
-        <div className="flex items-center justify-center py-12 text-muted-foreground">
+        <div className="flex items-center justify-center py-12 text-gray-400">
           Nenhum pet encontrado
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+          <div className="grid w-full grid-cols-1 justify-items-center sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
             {pets.map((pet) => (
               <PetCard
                 key={pet.id}
