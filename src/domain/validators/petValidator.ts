@@ -2,8 +2,9 @@ import { z } from 'zod';
 
 export const formPetSchema = z.object({
   nome: z.string().min(1, 'Nome é obrigatório'),
-  raca: z.string().min(1, 'Raça é obrigatório'),
-  idade: z.union([z.string(), z.number()]).optional(),
-})
+  raca: z.string().optional(),
+  idade: z.string().optional().transform((value) => value ? Number(value) : undefined),
+});
 
-export type FormPetSchema = z.infer<typeof formPetSchema>;
+export type FormPetSchemaInput = z.input<typeof formPetSchema>;
+export type FormPetSchema = z.output<typeof formPetSchema>;

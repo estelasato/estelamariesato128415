@@ -5,8 +5,8 @@ import type { ListResponse } from "@/shared/types/list";
 
 export interface CreatePetParams {
   nome: string;
-  raca: string;
-  idade: string | number | undefined;
+  raca?: string;
+  idade?: string | number;
 }
 
 export type UpdatePetParams = CreatePetParams;
@@ -14,9 +14,9 @@ export type UpdatePetParams = CreatePetParams;
 export interface Pet {
   id: number,
   nome: string,
-  raca: string,
-  idade: string | number | undefined,
-  foto: ImageType
+  raca?: string,
+  idade?: string | number,
+  foto?: ImageType
 }
 
 export interface listPetsParams extends PaginationParams {
