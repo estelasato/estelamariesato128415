@@ -1,10 +1,9 @@
 import { ownerFacade } from "@/app/facades/ownerFacade";
-import { petFacade } from "@/app/facades/petFacade";
 import type { CreateOwnerParams } from "@/domain/entities/Owner";
 import { formOwnerSchema, type FormOwnerSchema } from "@/domain/validators/ownerValidator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -21,44 +20,28 @@ export function useOwnerForm() {
     enabled: !!id,
   });
 
-  const { data: petsData } = useQuery({
-    queryKey: ["pets", "all-for-owner"],
-    queryFn: () => petFacade.listPets({ page: 0, size: 100 }),
-    enabled: isEdit,
+  const uploadPhotoMutation = useMutation({
+    mutationFn: (file: File) => ownerFacade.uploadOwnerPhoto(ownerId, file),
+    onSuccess: () => toast.success("Foto enviada com sucesso"),
+    onError: () => toast.error("Erro ao enviar foto"),
   });
 
-  const linkedPetIds = useMemo(
-    () => new Set((owner?.pets ?? []).map((p) => p.id)),
-    [owner?.pets]
-  );
-
-  const availablePets = useMemo(
-    () => (petsData?.content ?? []).filter((p) => !linkedPetIds.has(p.id)),
-    [petsData?.content, linkedPetIds]
-  );
-
-  const addPetMutation = useMutation({
-    mutationFn: (petId: number) => ownerFacade.addPet(ownerId, petId),
-    onSuccess: () => {
-      toast.success("Pet vinculado com sucesso");
-    },
-    onError: () => toast.error("Erro ao vincular pet"),
+  const deletePhotoMutation = useMutation({
+    mutationFn: () =>
+      ownerFacade.deleteOwnerPhoto({
+        id: ownerId,
+        fotoId: owner!.foto.id,
+      }),
+    onSuccess: () => toast.success("Foto removida"),
+    onError: () => toast.error("Erro ao remover foto"),
   });
 
-  const removePetMutation = useMutation({
-    mutationFn: (petId: number) => ownerFacade.removePet(ownerId, petId),
-    onSuccess: () => {
-      toast.success("Pet desvinculado");
-    },
-    onError: () => toast.error("Erro ao desvincular pet"),
-  });
-
-  function addPetToOwner(petId: number) {
-    addPetMutation.mutate(petId);
+  function uploadPhoto(file: File) {
+    uploadPhotoMutation.mutate(file);
   }
 
-  function removePetFromOwner(petId: number) {
-    removePetMutation.mutate(petId);
+  function deletePhoto() {
+    if (owner?.foto) deletePhotoMutation.mutate();
   }
 
   const form = useForm<FormOwnerSchema>({
@@ -113,10 +96,9 @@ export function useOwnerForm() {
     handleSubmit,
     isPending: isCreating || isUpdating || isLoadingOwner,
     owner,
-    availablePets,
-    addPetToOwner,
-    removePetFromOwner,
-    isAddingPet: addPetMutation.isPending,
-    isRemovingPet: removePetMutation.isPending,
+    uploadPhoto,
+    deletePhoto,
+    isUploadingPhoto: uploadPhotoMutation.isPending,
+    isDeletingPhoto: deletePhotoMutation.isPending,
   };
 }

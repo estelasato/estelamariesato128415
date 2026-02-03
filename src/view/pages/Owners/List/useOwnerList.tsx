@@ -1,6 +1,6 @@
 import { ownerFacade } from "@/app/facades/ownerFacade";
 import type { Owner } from "@/domain/entities/Owner";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
 export function useListOwners() {
