@@ -12,7 +12,7 @@ const buttonVariants = cva(
         default:
           "bg-orange-400 text-primary-foreground shadow hover:bg-orange-500/90",
         destructive:
-          "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
+          "bg-red-500 text-white shadow-sm hover:bg-destructive/90",
         outline:
           "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
         secondary:
@@ -49,7 +49,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
         {...props}
-        disabled={isLoading}
+        disabled={isLoading || props.disabled}
       >
         {isLoading ? <Spinner className="size-4 animate-spin" /> : children}
       </Comp>
