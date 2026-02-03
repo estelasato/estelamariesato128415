@@ -24,7 +24,7 @@ export const ownerFacade = {
   async updateOwner(id: number, params: UpdateOwnerParams) {
     const owner = await ownerService.updateOwner(id, params);
     queryClient.invalidateQueries({ queryKey: ['owners'] });
-    queryClient.invalidateQueries({ queryKey: ['owner', id] });
+    queryClient.invalidateQueries({ queryKey: ['owner', String(id)] });
     return owner;
   },
 
@@ -33,30 +33,32 @@ export const ownerFacade = {
     queryClient.invalidateQueries({ queryKey: ['owners'] });
   },
 
-  async uploadPetPhoto(id: number, file: File) {
+  async uploadOwnerPhoto(id: number, file: File) {
     const photo = await ownerService.uploadOwnerPhoto(id, file);
-    queryClient.invalidateQueries({ queryKey: ['owner', id] });
+    queryClient.invalidateQueries({ queryKey: ['owners'] });
+    queryClient.invalidateQueries({ queryKey: ['owner', String(id)] });
     return photo;
   },
 
   async deleteOwnerPhoto(params: DeleteImageParams) {
     await ownerService.deleteOwnerPhoto(params);
-    queryClient.invalidateQueries({ queryKey: ['owner', params.id] });
+    queryClient.invalidateQueries({ queryKey: ['owners'] });
+    queryClient.invalidateQueries({ queryKey: ['owner', String(params.id)] });
   },
 
   async addPet(ownerId: number, petId: number) {
     await ownerService.addPet(ownerId, petId);
-    queryClient.invalidateQueries({ queryKey: ['owner', ownerId] });
+    queryClient.invalidateQueries({ queryKey: ['owner', String(ownerId)] });
     queryClient.invalidateQueries({ queryKey: ['owners'] });
-    queryClient.invalidateQueries({ queryKey: ['pet', petId] });
+    queryClient.invalidateQueries({ queryKey: ['pet', String(petId)] });
     queryClient.invalidateQueries({ queryKey: ['pets'] });
   },
 
   async removePet(ownerId: number, petId: number) {
     await ownerService.removePet(ownerId, petId);
-    queryClient.invalidateQueries({ queryKey: ['owner', ownerId] });
+    queryClient.invalidateQueries({ queryKey: ['owner', String(ownerId)] });
     queryClient.invalidateQueries({ queryKey: ['owners'] });
-    queryClient.invalidateQueries({ queryKey: ['pet', petId] });
+    queryClient.invalidateQueries({ queryKey: ['pet', String(petId)] });
     queryClient.invalidateQueries({ queryKey: ['pets'] });
   },
 };

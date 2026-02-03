@@ -23,7 +23,7 @@ export const petFacade = {
   async updatePet(id: number, params: UpdatePetParams) {
     const pet = await petService.updatePet(id, params);
     queryClient.invalidateQueries({ queryKey: ['pets'] });
-    queryClient.invalidateQueries({ queryKey: ['pet', id] });
+    queryClient.invalidateQueries({ queryKey: ['pet', String(id)] });
     return pet;
   },
 
@@ -34,12 +34,12 @@ export const petFacade = {
 
   async uploadPetPhoto(id: number, file: File) {
     const photo = await petService.uploadPetPhoto(id, file);
-    queryClient.invalidateQueries({ queryKey: ['pet', id] });
+    queryClient.invalidateQueries({ queryKey: ['pet', String(id)] });
     return photo;
   },
 
   async deletePetPhoto(params: DeleteImageParams) {
     await petService.deletePetPhoto(params);
-    queryClient.invalidateQueries({ queryKey: ['pet', params.id] });
+    queryClient.invalidateQueries({ queryKey: ['pet', String(params.id)] });
   },
 };
