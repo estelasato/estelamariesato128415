@@ -11,7 +11,9 @@
     "preview": "vite preview",
     "test": "vitest",
     "test:run": "vitest run",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "docker:build": "docker build -t pet-manager .",
+    "docker:run": "docker run -p 3000:80 pet-manager"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

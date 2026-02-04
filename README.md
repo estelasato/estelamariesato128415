@@ -1,73 +1,141 @@
-# React + TypeScript + Vite
+# Projeto Front-end — Pet Manager
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Aplicação front-end em React + TypeScript + Vite para gestão de pets e tutores, consumindo API REST.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Dados de Inscrição
 
-## React Compiler
+| Campo | Valor |
+|-------|--------|
+| **Candidata** | Estela Marie Sato |
+| **CPF** | 128.415.699-00 |
+| **Vaga** | ANALISTA DE TI |
+| **Tipo** | Projeto front-end  |
 
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
+---
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Credenciais para login:
+```
+login: admin
+senha: admin
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Como executar
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Pré-requisitos
+
+- **Node.js**
+- **Yarn**
+
+### Instalação
+
+```bash
+yarn install
 ```
+
+### Executar localmente
+
+```bash
+yarn dev
+```
+Abre em `http://localhost:5173` .
+
+
+### Build para produção
+
+```bash
+yarn build
+```
+
+Saída em `dist/`. Para pré-visualizar o build: `yarn preview`.
+
+---
+
+## Docker
+
+```bash
+yarn docker:build
+yarn docker:run
+```
+
+## Como testar
+
+```bash
+yarn test          # watch
+yarn test:run      # uma vez
+yarn test:coverage
+```
+
+---
+
+## Arquitetura
+
+O projeto segue uma estrutura em camadas: **domain** (núcleo), **app** (regras e infra), **view** (UI) e **shared** (tipos/utils comuns).
+
+### Visão geral
+
+```
+src/
+├── app/              # Regras de aplicação e infraestrutura
+│   ├── facades/      # Orquestram services + invalidação de cache (React Query)
+│   ├── services/     # Chamadas HTTP (axios), auth, owners, pets
+│   ├── store/        # Estado global (auth com Zustand + persist)
+│   ├── health/       # Health check e liveness (ciclo de vida da app)
+│   ├── lib/          # QueryClient (React Query)
+│   └── utils/        # Máscaras, helpers
+├── domain/           # Núcleo: entidades e regras de validação
+│   ├── entities/     # Tipos/DTOs (Auth, Owner, Pet, Health)
+│   └── validators/   # Schemas Zod para formulários
+├── view/             # Interface
+│   ├── components/  # Componentes reutilizáveis e UI (estilo shadcn)
+│   ├── layouts/      # Layouts (auth, área privada)
+│   └── pages/        # Páginas por feature (List, Form, Detail + hooks useX)
+├── shared/           # Compartilhado entre camadas
+│   ├── types/        # Tipos genéricos (listagem, paginação, imagem)
+│   └── utils/        # Utilitários (ex.: cn)
+├── router/           # Rotas e AuthGuard (proteção por token)
+└── test/             # Setup e documentação de testes
+```
+
+### Fluxo de dados
+
+- **View** usa apenas **facades** . Hooks por página chamam facades e reagem ao estado do React Query.
+- **Facades** chamam **services** (HTTP) e fazem `queryClient.invalidateQueries` após mutações.
+- **Services** usam `httpClient` (axios com interceptors: Bearer, refresh de token).
+- **Domain** contém entidades e validators (Zod).
+- **Auth**: Zustand (persist) + AuthGuard (validação de token com margem de expiração). Rotas privadas exigem autenticação.
+
+### Health check
+
+- **Liveness**: indica se a aplicação React “subiu” (sinalizado no mount da `App` via `markAppAsAlive`).
+- Rota pública `/health` exibe o status (healthy/unhealthy) e o payload de liveness. Útil para monitoramento e documentação de requisitos.
+
+---
+
+## Stack principal
+
+| Área | Tecnologia |
+|-----|------------|
+| Build / dev | Vite 7, TypeScript |
+| UI | React 19, React Router 7 |
+| Estilo | Tailwind CSS 4, Radix UI, Lucide icons |
+| Formulários | React Hook Form, Zod (@hookform/resolvers) |
+| Dados / cache | TanStack React Query |
+| Auth | Zustand (persist), axios interceptors |
+| Testes | Vitest, Testing Library |
+
+---
+
+## Resumo scripts
+
+| Script | Descrição |
+|--------|-----------|
+| `yarn dev` | Sobe o servidor de desenvolvimento |
+| `yarn build` | Build de produção (`tsc` + `vite build`) |
+| `yarn test` | Roda testes em modo watch |
+| `yarn test:run` | Roda testes uma vez |
+| `yarn docker:build` | Gera a imagem Docker da aplicação (tag `pet-manager`) |
+| `yarn docker:run` | Sobe o container e expõe o app em `http://localhost:3000` |
