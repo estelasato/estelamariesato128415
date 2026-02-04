@@ -51,7 +51,7 @@ export function useListOwners() {
 
   useEffect(() => {
     if (data) {
-      setParams((prev: any) => ({
+      setParams((prev: PaginationParams) => ({
         size: data.size ?? prev.size,
         page: data.page ?? prev.page,
         pageCount: data.pageCount ?? prev.pageCount,
