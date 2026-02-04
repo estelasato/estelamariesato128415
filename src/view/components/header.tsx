@@ -43,7 +43,7 @@ export function Header() {
           <img src={logo} alt="Logo" className="w-10 h-10 object-contain" />
           <h1 className="text-lg font-extrabold text-center mb-3 mt-4">
             <span className="bg-gradient-to-r from-orange-700 via-orange-400 to-amber-200 bg-clip-text text-transparent">
-              PetRegistry
+              PetManager
             </span>
           </h1>
 
