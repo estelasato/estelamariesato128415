@@ -36,10 +36,10 @@ export default function PetForm() {
       </div>
 
       <div className="shadow-md p-6 rounded-xl bg-white">
-        <h1 className="text-2xl font-bold mb-4">
+        <h1 className="text-2xl text-center sm:text-left font-bold mb-4">
           {isEdit ? "Editar Pet" : "Cadastrar Pet"}
         </h1>
-
+        <div className="justify-items-center sm:justify-items-start">
         {isEdit && (
           <ImageUpload
             imageUrl={pet?.foto?.url}
@@ -51,6 +51,7 @@ export default function PetForm() {
             className="mb-6"
           />
         )}
+        </div>
 
         <form className="flex flex-col gap-4" onSubmit={form.handleSubmit(handleSubmit)}>
           <Input

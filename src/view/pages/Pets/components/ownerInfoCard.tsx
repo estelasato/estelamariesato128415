@@ -34,7 +34,10 @@ export function OwnerInfoCard({ nome, telefone, email, onDelete, onClick, disabl
         type="button"
         variant="ghost"
         size="sm"
-        onClick={onDelete}
+        onClick={(e) => {
+          e.stopPropagation();
+          onDelete();
+        }}
         disabled={disabled}
         className="text-destructive hover:text-destructive shrink-0"
       >

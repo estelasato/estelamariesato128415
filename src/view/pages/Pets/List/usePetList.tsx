@@ -11,7 +11,6 @@ export function useListPets() {
     pageCount: 0,
     total: 0,
   });
-
   const [search, setSearch] = useState<string>('');
   const [petToDelete, setPetToDelete] = useState<Pet | null>(null);
 
@@ -30,18 +29,6 @@ export function useListPets() {
       nome: search,
     }),
   });
-
-  function handleSearch(value?: string) {
-    setSearch(value ?? '');
-  }
-
-  function handlePageChange(page: number) {
-    setParams((prev: any) => ({ ...prev, page }));
-  }
-
-  function openDeleteModal(pet: Pet) {
-    setPetToDelete(pet);
-  }
 
   function handleConfirmDelete() {
     if (petToDelete) {
@@ -66,11 +53,10 @@ export function useListPets() {
     total: data?.total ?? 0,
     isLoading,
     error,
-    handleSearch,
-    handlePageChange,
+    setSearch,
+    setParams,
     petToDelete,
     setPetToDelete,
-    openDeleteModal,
     handleConfirmDelete,
     isDeleting: deleteMutation.isPending,
   };

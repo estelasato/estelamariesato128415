@@ -12,11 +12,10 @@ export default function PetList() {
     pets,
     params,
     isLoading,
-    handleSearch,
-    handlePageChange,
+    setSearch,
+    setParams,
     petToDelete,
     setPetToDelete,
-    openDeleteModal,
     handleConfirmDelete,
     isDeleting,
   } = useListPets();
@@ -28,7 +27,7 @@ export default function PetList() {
         title="Pets"
         textButton="Novo Pet"
         onRegister={() => navigate('/pets/create')}
-        onSearch={handleSearch}
+        onSearch={(value) => setSearch(value ?? '')}
       />
 
       {isLoading ? (
@@ -41,14 +40,15 @@ export default function PetList() {
         </div>
       ) : (
         <>
-          <div className="grid w-full grid-cols-1 justify-items-center sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+          <div
+            className="grid w-full grid-cols-1 justify-items-center sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
             {pets.map((pet) => (
               <PetCard
                 key={pet.id}
                 pet={pet}
                 onClick={() => navigate(`/pets/${pet.id}`)}
                 onEdit={() => navigate(`/pets/${pet.id}/edit`)}
-                onDelete={() => openDeleteModal(pet)}
+                onDelete={() => setPetToDelete(pet)}
               />
             ))}
           </div>
@@ -57,7 +57,7 @@ export default function PetList() {
             <Pagination
               page={params.page}
               pageCount={params?.pageCount ?? 0}
-              onPageChange={(page) => handlePageChange(page)}
+              onPageChange={(page) => setParams((prev: any) => ({ ...prev, page }))}
             />
           )}
         </>

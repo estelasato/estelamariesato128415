@@ -11,6 +11,7 @@ export default function PetDetail() {
   const navigate = useNavigate();
   const { id } = useParams();
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+
   const {
     pet,
     isLoading,
@@ -44,8 +45,6 @@ export default function PetDetail() {
     );
   }
 
-  const tutores = pet.tutores ?? [];
-
   return (
     <div className="flex flex-col gap-6 md:max-w-xl mx-auto">
       <div
@@ -57,8 +56,8 @@ export default function PetDetail() {
       </div>
 
 
-      <div className="rounded-xl shadow-sm bg-card p-5 flex items-start justify-between gap-4 ">
-        <div className="flex items-center gap-4">
+      <div className="rounded-xl shadow-sm bg-card p-5 flex items-center sm:items-start flex-col sm:flex-row justify-between gap-4 ">
+        <div className="flex items-center flex-col sm:flex-row gap-4">
           {pet.foto?.url ? (
             <img
               src={pet.foto?.url ?? ""}
@@ -70,7 +69,7 @@ export default function PetDetail() {
               <PawPrint className="size-12 text-orange-300" />
             </div>
           )}
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-1 text-center sm:text-left">
             <h1 className="text-2xl font-bold tracking-tight text-primary">
               {pet.nome ?? "—"}
             </h1>
@@ -118,9 +117,9 @@ export default function PetDetail() {
             disabled={isAddingOwner || availableOwners.length === 0}
           />
         </div>
-        {tutores.length > 0 ? (
+        {pet?.tutores?.length > 0 ? (
           <div className="flex flex-col gap-2 mb-4">
-            {tutores.map((tutor) => (
+            {pet.tutores.map((tutor) => (
               <OwnerInfoCard
                 nome={tutor.nome}
                 telefone={tutor.telefone}
