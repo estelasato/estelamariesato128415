@@ -11,13 +11,14 @@ const PetDetail = lazy(() => import('../view/pages/Pets/Detail'));
 const PetForm = lazy(() => import('../view/pages/Pets/Form'));
 const OwnerList = lazy(() => import('../view/pages/Owners/List'));
 const OwnerForm = lazy(() => import('../view/pages/Owners/Form'));
+const OwnerDetail = lazy(() => import('../view/pages/Owners/Detail'));
 
 export function Router() {
   return (
     <BrowserRouter>
       <Suspense fallback={
         <div className="h-screen w-screen flex items-center justify-center">
-          <Spinner className="size-10 text-primary" />
+          <Spinner className="size-10 text-primary-500" />
         </div>
       }>
         <Routes>
@@ -29,14 +30,15 @@ export function Router() {
 
           <Route element={<AuthGuard isPrivate={true} />}>
             <Route element={<PrivateLayout />}>
-              <Route path="/" element={<h1>dash</h1>} />
+              <Route path="/" element={<PetList />} />
               <Route path="/pets" element={<PetList />} />
               <Route path="/pets/create" element={<PetForm />} />
               <Route path="/pets/:id" element={<PetDetail />} />
               <Route path="/pets/:id/edit" element={<PetForm />} />
               <Route path="/owners" element={<OwnerList />} />
               <Route path="/owners/create" element={<OwnerForm />} />
-              <Route path="/owners/:id" element={<OwnerForm />} />
+              <Route path="/owners/:id" element={<OwnerDetail />} />
+              <Route path="/owners/:id/edit" element={<OwnerForm />} />
             </Route>
           </Route>
 

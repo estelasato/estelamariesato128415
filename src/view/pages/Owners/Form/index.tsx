@@ -36,11 +36,11 @@ export default function OwnerForm() {
         </span>
       </div>
 
-      <div className="border border-border p-6 rounded-xl">
-          <h1 className="text-2xl font-bold mb-4">
-            {isEdit ? "Editar Tutor" : "Cadastrar Tutor"}
-          </h1>
-
+      <div className="shadow-md p-6 rounded-xl bg-white">
+        <h1 className="text-2xl text-center sm:text-left font-bold mb-4">
+          {isEdit ? "Editar Tutor" : "Cadastrar Tutor"}
+        </h1>
+        <div className="justify-items-center sm:justify-items-start">
           {isEdit && (
             <ImageUpload
               imageUrl={owner?.foto?.url}
@@ -52,52 +52,52 @@ export default function OwnerForm() {
               className="mb-6"
             />
           )}
-
-          <form
-            className="flex flex-col gap-4"
-            onSubmit={form.handleSubmit(handleSubmit)}
-          >
-            <Input
-              {...form.register("nome")}
-              label="Nome*"
-              error={errors.nome?.message}
-            />
-            <Input
-              {...form.register("email")}
-              label="E-mail*"
-              type="email"
-              error={errors.email?.message}
-            />
-            <Input
-              {...form.register("telefone")}
-              label="Telefone*"
-              mask="cell"
-              error={errors.telefone?.message}
-            />
-            <Input
-              {...form.register("endereco")}
-              label="Endereço*"
-              error={errors.endereco?.message}
-            />
-            <Controller
-              name="cpf"
-              control={form.control}
-              render={({ field }) => (
-                <Input
-                  {...field}
-                  label="CPF*"
-                  mask="cpf"
-                  value={field.value ?? ""}
-                  error={errors.cpf?.message}
-                />
-              )}
-            />
-
-            <Button type="submit" isLoading={isPending}>
-              {isEdit ? "Salvar" : "Cadastrar"}
-            </Button>
-          </form>
         </div>
+        <form
+          className="flex flex-col gap-4"
+          onSubmit={form.handleSubmit(handleSubmit)}
+        >
+          <Input
+            {...form.register("nome")}
+            label="Nome*"
+            error={errors.nome?.message}
+          />
+          <Input
+            {...form.register("email")}
+            label="E-mail*"
+            type="email"
+            error={errors.email?.message}
+          />
+          <Input
+            {...form.register("telefone")}
+            label="Telefone*"
+            mask="cell"
+            error={errors.telefone?.message}
+          />
+          <Input
+            {...form.register("endereco")}
+            label="Endereço*"
+            error={errors.endereco?.message}
+          />
+          <Controller
+            name="cpf"
+            control={form.control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                label="CPF*"
+                mask="cpf"
+                value={field.value ?? ""}
+                error={errors.cpf?.message}
+              />
+            )}
+          />
+
+          <Button type="submit" isLoading={isPending}>
+            {isEdit ? "Salvar" : "Cadastrar"}
+          </Button>
+        </form>
+      </div>
     </div>
   );
 }

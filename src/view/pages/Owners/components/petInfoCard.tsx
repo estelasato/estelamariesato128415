@@ -19,7 +19,7 @@ export function PetInfoCard({ nome, raca, idade, onClick, onRemove, disabled }: 
   return (
     <div
       onClick={onClick}
-      className="cursor-pointer flex items-center justify-between gap-2 rounded-md border border-border bg-muted/30 px-4 py-3"
+      className="cursor-pointer flex items-center justify-between gap-2 rounded-md border border-border bg-muted/30 px-4 py-3 hover:bg-orange-50 hover:border-orange-400"
     >
       <div className="flex flex-col gap-1 min-w-0">
         <div className="flex items-center gap-2 font-medium">

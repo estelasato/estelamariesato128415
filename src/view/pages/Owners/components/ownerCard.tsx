@@ -27,6 +27,7 @@ export function OwnerCard({ owner, onClick, onEdit, onDelete }: OwnerCardProps) 
         owner.foto?.url ? { url: owner.foto.url, alt: owner.nome } : undefined
       }
       emptyAvatarIcon={User}
+      className="w-full max-w-[300px] min-w-0"
       title={owner.nome}
       contentClassName="gap-2"
     >
