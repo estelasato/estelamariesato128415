@@ -2,11 +2,12 @@ import { ownerFacade } from "@/app/facades/ownerFacade";
 import { petFacade } from "@/app/facades/petFacade";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 export function useOwnerDetail() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const ownerId = id ? Number(id) : 0;
   const [selectedPetId, setSelectedPetId] = useState("");
   const queryClient = useQueryClient();
@@ -66,6 +67,19 @@ export function useOwnerDetail() {
     setSelectedPetId("");
   }
 
+  const deleteOwnerMutation = useMutation({
+    mutationFn: () => ownerFacade.deleteOwner(ownerId),
+    onSuccess: () => {
+      toast.success("Tutor excluído com sucesso");
+      navigate("/owners");
+    },
+    onError: () => toast.error("Erro ao excluir tutor"),
+  });
+
+  function handleConfirmDelete() {
+    deleteOwnerMutation.mutate();
+  }
+
   return {
     owner,
     isLoading,
@@ -73,6 +87,8 @@ export function useOwnerDetail() {
     selectedPetId,
     handleSelectPet,
     removePetFromOwner,
+    handleConfirmDelete,
+    isDeleting: deleteOwnerMutation.isPending,
     isAddingPet: addPetMutation.isPending,
     isRemovingPet: removePetMutation.isPending,
   };
