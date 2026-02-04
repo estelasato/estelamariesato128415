@@ -3,9 +3,10 @@ import { useMutation } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import type { Pet } from "@/domain/entities/Pet";
+import type { PaginationParams } from "@/shared/types/pagination";
 
 export function useListPets() {
-  const [params, setParams] = useState<any>({
+  const [params, setParams] = useState<PaginationParams>({
     page: 0,
     size: 10,
     pageCount: 0,

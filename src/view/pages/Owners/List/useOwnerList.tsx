@@ -1,10 +1,11 @@
 import { ownerFacade } from "@/app/facades/ownerFacade";
 import type { Owner } from "@/domain/entities/Owner";
+import type { PaginationParams } from "@/shared/types/pagination";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
 export function useListOwners() {
-  const [params, setParams] = useState<any>({
+  const [params, setParams] = useState<PaginationParams>({
     page: 0,
     size: 10,
     pageCount: 0,
