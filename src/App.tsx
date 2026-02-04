@@ -3,8 +3,13 @@ import { queryClient } from './app/lib/queryClient';
 import { Router } from './router';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useEffect } from 'react';
 
-export function App() {
+export function App({ onAppMounted }: { onAppMounted: () => void }) {
+  useEffect(() => {
+    onAppMounted();
+  }, [onAppMounted]);
+
   return (
     <QueryClientProvider client={queryClient}>
       <Router />

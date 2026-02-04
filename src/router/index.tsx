@@ -4,6 +4,7 @@ import { AuthLayout } from "../view/layouts/authLayout";
 import { lazy, Suspense } from "react";
 import { Spinner } from "@/view/components/ui/spinner";
 import { PrivateLayout } from "@/view/layouts/privateLayout";
+import Health from "@/view/pages/Health";
 
 const Login = lazy(() => import('../view/pages/Login'));
 const PetList = lazy(() => import('../view/pages/Pets/List'));
@@ -22,6 +23,8 @@ export function Router() {
         </div>
       }>
         <Routes>
+          <Route path="/health" element={<Health />} />
+
           <Route element={<AuthGuard isPrivate={false} />}>
             <Route element={<AuthLayout />}>
               <Route path="/login" element={<Login />} />
