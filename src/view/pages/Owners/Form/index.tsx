@@ -68,12 +68,20 @@ export default function OwnerForm() {
             type="email"
             error={errors.email?.message}
           />
-          <Input
-            {...form.register("telefone")}
-            label="Telefone*"
-            mask="cell"
-            error={errors.telefone?.message}
+
+          <Controller
+            name="telefone"
+            control={form.control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                label="Telefone*"
+                mask="cell"
+                error={errors.telefone?.message}
+              />
+            )}
           />
+
           <Input
             {...form.register("endereco")}
             label="Endereço*"
