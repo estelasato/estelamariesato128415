@@ -4,6 +4,7 @@ import { Input } from "@/view/components/ui/input";
 import { Button } from "@/view/components/ui/button";
 import { ImageUpload } from "@/view/components/imageUpload";
 import { ArrowLeftIcon } from "lucide-react";
+import { Spinner } from "@/view/components/ui/spinner";
 
 export default function PetForm() {
   const navigate = useNavigate();
@@ -14,6 +15,7 @@ export default function PetForm() {
     form,
     handleSubmit,
     isPending,
+    isLoadingPet,
     pet,
     uploadPhoto,
     deletePhoto,
@@ -23,15 +25,23 @@ export default function PetForm() {
 
   const { errors } = form.formState;
 
+  if (isLoadingPet) {
+    return (
+      <div className="flex justify-center py-12">
+        <Spinner className="size-10" />
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-6 md:max-w-xl mx-auto">
       <div
         className="flex items-center gap-2 cursor-pointer"
-        onClick={() => navigate("/pets")}
+        onClick={() => navigate(-1)}
       >
         <ArrowLeftIcon className="size-5" />
         <span className="text-md">
-          Voltar para a lista
+          Voltar
         </span>
       </div>
 
@@ -40,7 +50,6 @@ export default function PetForm() {
           {isEdit ? "Editar Pet" : "Cadastrar Pet"}
         </h1>
         <div className="justify-items-center sm:justify-items-start">
-        {isEdit && (
           <ImageUpload
             imageUrl={pet?.foto?.url}
             imageAlt={pet?.foto?.nome}
@@ -50,7 +59,7 @@ export default function PetForm() {
             isDeleting={isDeletingPhoto}
             className="mb-6"
           />
-        )}
+
         </div>
 
         <form className="flex flex-col gap-4" onSubmit={form.handleSubmit(handleSubmit)}>

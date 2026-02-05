@@ -36,9 +36,9 @@ export default function PetDetail() {
   if (!pet) {
     return (
       <div className="flex flex-col gap-4 md:max-w-xl mx-auto">
-        <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate("/pets")}>
+        <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate(-1)}>
           <ArrowLeftIcon className="size-5" />
-          <span className="text-md">Voltar para a lista</span>
+          <span className="text-md">Voltar</span>
         </div>
         <p className="text-muted-foreground">Pet não encontrado.</p>
       </div>
@@ -52,7 +52,7 @@ export default function PetDetail() {
         onClick={() => navigate("/pets")}
       >
         <ArrowLeftIcon className="size-5" />
-        <span className="text-md">Voltar para a lista</span>
+        <span className="text-md">Voltar</span>
       </div>
 
 

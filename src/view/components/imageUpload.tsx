@@ -30,17 +30,15 @@ export function ImageUpload({
   size = "lg",
 }: ImageUploadProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [isImageLoaded, setIsImageLoaded] = useState(false);
+  const [image, setImage] = useState<string | null>(imageUrl ?? null);
   const dimension = sizeClasses[size];
-
-  useEffect(() => {
-    if (imageUrl) setIsImageLoaded(false);
-  }, [imageUrl]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) onUpload(file);
-    e.target.value = "";
+    if (!file) return;
+
+    setImage(URL.createObjectURL(file));
+    onUpload(file);
   };
 
   return (
@@ -61,21 +59,14 @@ export function ImageUpload({
           disabled={isLoading || isDeleting}
         />
 
-        {imageUrl ? (
+        {image ? (
           <>
-            {!isImageLoaded && (
-              <div className="absolute inset-0 flex items-center justify-center bg-muted/50">
-                <Loader2Icon className="size-8 animate-spin text-muted-foreground" />
-              </div>
-            )}
             <img
-              src={imageUrl}
+              src={image}
               alt={imageAlt}
               className={cn(
                 "absolute inset-0 w-full h-full object-cover transition-opacity duration-200",
-                isImageLoaded ? "opacity-100" : "opacity-0"
               )}
-              onLoad={() => setIsImageLoaded(true)}
             />
             <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
               <button
@@ -95,6 +86,7 @@ export function ImageUpload({
                 onClick={(e) => {
                   e.stopPropagation();
                   onRemove();
+                  setImage(null);
                 }}
                 disabled={isDeleting}
                 className="cursor-pointer p-2 rounded-full bg-red-400 text-white hover:bg-red-500 transition-colors disabled:opacity-50"
@@ -115,12 +107,12 @@ export function ImageUpload({
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            disabled={isLoading}
+            disabled={isLoading || isDeleting}
             className="absolute inset-0 flex flex-col items-center justify-center gap-1 text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors disabled:opacity-50"
           >
             <ImageIcon className="size-10" />
             <span className="text-xs font-medium">
-              {isLoading ? "Enviando..." : "Enviar foto"}
+              {isLoading || isDeleting ?( isLoading ? "Enviando..." : "Removendo..." ): "Enviar foto"}
             </span>
           </button>
         )}

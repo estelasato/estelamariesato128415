@@ -26,9 +26,11 @@ export function PetCard({ pet, onClick, onEdit, onDelete }: PetCardProps) {
       <p className="text-sm text-muted-foreground overflow-hidden text-ellipsis whitespace-nowrap">
         {pet.raca}
       </p>
-      <p className="text-sm text-muted-foreground">
-        {pet.idade} {pet.idade === 1 ? "ano" : "anos"}
-      </p>
+      {!!pet.idade && (
+        <p className="text-sm text-muted-foreground">
+          {pet.idade} {pet.idade === 1 ? "ano" : "anos"}
+        </p>
+      )}
     </Card>
   );
 }

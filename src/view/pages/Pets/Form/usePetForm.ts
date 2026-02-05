@@ -6,19 +6,20 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { formPetSchema, type FormPetSchema, type FormPetSchemaInput } from "@/domain/validators/petValidator";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useEffect} from "react";
+import { useEffect, useState } from "react";
 
 export function usePetForm() {
   const { id } = useParams();
-  const isEdit = !!id;
   const navigate = useNavigate();
+  const [imageProfile, setImageProfile] = useState<File | null>(null);
+
+  const isEdit = !!id;
 
   const { data: pet, isLoading: isLoadingPet } = useQuery({
     queryKey: ['pet', id],
     queryFn: () => petFacade.getPet(Number(id)),
     enabled: !!id,
   })
-
 
   const form = useForm<FormPetSchemaInput, unknown, FormPetSchema>({
     resolver: zodResolver(formPetSchema),
@@ -37,13 +38,13 @@ export function usePetForm() {
     mutationFn: (data: CreatePetParams) => petFacade.updatePet(Number(id), data),
   })
 
-  const uploadPhotoMutation = useMutation({
-    mutationFn: (file: File) => petFacade.uploadPetPhoto(Number(id), file),
-    onSuccess: () => toast.success("Foto enviada com sucesso"),
-    onError: () => toast.error("Erro ao enviar foto"),
+  const { mutateAsync: uploadPhotoMutation, isPending: isUploadingPhoto } = useMutation({
+    mutationFn: (params: { file: File, petId: number }) => petFacade.uploadPetPhoto(params.petId, params.file),
+    onSuccess: () => isEdit && toast.success("Foto salva com sucesso"),
+    onError: () => toast.error("Erro ao salvar foto"),
   })
 
-  const deletePhotoMutation = useMutation({
+  const { mutateAsync: deletePhotoMutation, isPending: isDeletingPhoto } = useMutation({
     mutationFn: () =>
       petFacade.deletePetPhoto({
         id: Number(id),
@@ -53,26 +54,38 @@ export function usePetForm() {
     onError: () => toast.error("Erro ao remover foto"),
   })
 
-  function uploadPhoto(file: File) {
-    uploadPhotoMutation.mutate(file);
+  async function uploadPhoto(file: File) {
+    if (isEdit) {
+      await uploadPhotoMutation({ file, petId: Number(id) });
+    } else {
+      setImageProfile(file);
+    }
   }
 
-  function deletePhoto() {
-    if (pet?.foto) deletePhotoMutation.mutate();
+  async function deletePhoto() {
+    if (isEdit) {
+      if (pet?.foto) await deletePhotoMutation();
+    } else {
+      setImageProfile(null);
+    }
   }
 
-  const handleSubmit: SubmitHandler<FormPetSchema> = (data) => {
+  const handleSubmit: SubmitHandler<FormPetSchema> = async (data) => {
     try {
+      let pet
       const petData: CreatePetParams = {
         ...data,
-        idade: data.idade !== undefined ? (typeof data.idade === 'string' ? Number(data.idade) : data.idade) : undefined,
+        idade: !!data.idade ? Number(data.idade) : undefined,
       };
       if (isEdit) {
-        updatePet(petData);
+        await updatePet(petData);
       } else {
-        createPet(petData);
+        pet = await createPet(petData);
+        if (imageProfile) {
+          await uploadPhotoMutation({ file: imageProfile, petId: pet.id });
+        }
       }
-      navigate(isEdit ? `/pets/${id}` : "/pets");
+      navigate(!!pet?.id ? `/pets/${pet.id}` : "/pets");
       toast.success("Pet salvo com sucesso");
     } catch (error) {
       toast.error('Erro ao salvar pet');
@@ -91,13 +104,14 @@ export function usePetForm() {
 
   return {
     handleSubmit,
-    isPending: isCreating || isUpdating || isLoadingPet,
+    isLoadingPet,
+    isPending: isCreating || isUpdating,
     form,
     pet,
     owners: pet?.tutores || [],
     uploadPhoto,
     deletePhoto,
-    isUploadingPhoto: uploadPhotoMutation.isPending,
-    isDeletingPhoto: deletePhotoMutation.isPending,
+    isUploadingPhoto,
+    isDeletingPhoto,
   }
 }

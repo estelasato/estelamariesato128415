@@ -35,11 +35,13 @@ export const petFacade = {
   async uploadPetPhoto(id: number, file: File) {
     const photo = await petService.uploadPetPhoto(id, file);
     queryClient.invalidateQueries({ queryKey: ['pet', String(id)] });
+    queryClient.invalidateQueries({ queryKey: ['pets'] });
     return photo;
   },
 
   async deletePetPhoto(params: DeleteImageParams) {
     await petService.deletePetPhoto(params);
     queryClient.invalidateQueries({ queryKey: ['pet', String(params.id)] });
+    queryClient.invalidateQueries({ queryKey: ['pets'] });
   },
 };
